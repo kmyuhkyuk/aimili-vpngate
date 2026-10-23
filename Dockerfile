@@ -1,29 +1,4 @@
-FROM debian:bookworm-slim
-
-ARG TARGETARCH
-ARG TARGETVARIANT
-ARG BUILD_VERSION=dev
-
-LABEL org.opencontainers.image.title="AimiliVPN" \
-      org.opencontainers.image.description="VPNGate node manager with HTTP and SOCKS5 proxy" \
-      org.opencontainers.image.source="https://github.com/baoweise-bot/aimili-vpngate" \
-      org.opencontainers.image.version="${BUILD_VERSION}"
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        iproute2 \
-        iptables \
-        openvpn \
-        procps \
-        psmisc \
-        python3 \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-COPY VERSION README.md LICENSE ./
-COPY vpngate_manager.py vpn_utils.py proxy_server.py snapshot_utils.py ./
-COPY mirror ./mirror
+FROM kmyuhkyuk/aimilivpn-base-slim:latest
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -33,6 +8,12 @@ ENV PYTHONUNBUFFERED=1 \
     UI_PORT=8787 \
     LOCAL_PROXY_HOST=127.0.0.1 \
     LOCAL_PROXY_PORT=7928
+
+WORKDIR /app
+
+COPY VERSION README.md LICENSE ./
+COPY vpngate_manager.py vpn_utils.py proxy_server.py snapshot_utils.py ./
+COPY mirror ./mirror
 
 RUN mkdir -p /data \
     && python3 -m py_compile vpngate_manager.py vpn_utils.py proxy_server.py snapshot_utils.py

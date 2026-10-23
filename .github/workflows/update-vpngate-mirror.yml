@@ -1,16 +1,7 @@
 name: Update VPNGate mirror
 
 on:
-  schedule:
-    # Offset from quarter-hour peaks because GitHub may delay busy schedules.
-    - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/update-vpngate-mirror.yml"
-      - "scripts/build_vpngate_mirror.py"
-      - "snapshot_utils.py"
 
 permissions:
   contents: read
